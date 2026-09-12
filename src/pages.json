@@ -1,0 +1,22 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": { "navigationBarTitleText": "错题追问教练" }
+    },
+    {
+      "path": "pages/add/add",
+      "style": { "navigationBarTitleText": "录入错题" }
+    },
+    {
+      "path": "pages/detail/detail",
+      "style": { "navigationBarTitleText": "错题详情" }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "错题追问教练",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f6f6f6"
+  }
+}

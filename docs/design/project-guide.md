@@ -17,7 +17,7 @@
 
 | 层 | 技术 | 说明 |
 |---|---|---|
-| 前端 | 微信小程序原生（WXML/WXSS/JS） | 官方第一公民，文档最全 |
+| 前端 | uni-app（Vue3 + Vite），编译到微信小程序 | 一套 Vue 代码，多端编译；开发体验贴近标准 Vue3 |
 | 后端 | CloudBase 云函数（Node.js 18，CommonJS） | 免服务器/域名/备案 |
 | 数据库 | CloudBase 文档型数据库（集合） | 免运维；客户端/云函数双 SDK |
 | 存储 | CloudBase 云存储 | 小程序端直传，拿 fileID 即可 |

@@ -20,7 +20,7 @@
 
 ## 技术栈
 
-- 前端：微信小程序（原生）
+- 前端：uni-app（Vue3 + Vite），编译到微信小程序
 - 后端：CloudBase 云函数（Node.js）
 - 数据库/存储：CloudBase 云数据库（文档型）/ 云存储
 - AI：DeepSeek / DashScope（OpenAI 兼容接口）
@@ -28,14 +28,16 @@
 ## 项目结构
 
 ```
-├── project.config.json      # 微信开发者工具项目配置
-├── miniprogram/             # 小程序前端
-│   ├── app.js               # 入口：wx.cloud.init
-│   ├── app.json             # 全局配置（页面路由）
-│   ├── api/index.js         # 云函数调用统一封装
-│   └── pages/               # index 列表 / add 录题 / detail 详情
-└── cloudfunctions/          # 云函数（后端）
-    └── login/               # 微信登录（第一个云函数）
+├── package.json / vite.config.js   # uni-app 工程（Vue3 + Vite）
+├── src/                            # 前端源码
+│   ├── main.js / App.vue           # 入口（App.vue 中 wx.cloud.init）
+│   ├── pages.json                  # 页面路由（对应原生 app.json）
+│   ├── manifest.json               # 应用配置（小程序 appid 在此配置）
+│   ├── api/index.js                # 云函数调用统一封装
+│   └── pages/                      # index 列表 / add 录题 / detail 详情
+├── dist/dev/mp-weixin              # 编译产物（导入微信开发者工具）
+└── cloudfunctions/                 # 云函数（后端）
+    └── login/                      # 微信登录（第一个云函数）
 ```
 
 ## 文档索引
@@ -48,8 +50,9 @@
 
 ## 快速开始（开发者）
 
-1. 注册小程序账号获取 AppID：[mp.weixin.qq.com](https://mp.weixin.qq.com/)
-2. 下载微信开发者工具：[下载地址](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
-3. 导入本项目文件夹，填入 AppID
-4. 开通云开发，关联环境 `my-diary-d2goz6lgh3e20a17e`
-5. 部署云函数：右键 `cloudfunctions/login` → 上传并部署（云端安装依赖）
+1. `npm install`
+2. `npm run dev:mp-weixin`（编译并监听，产物在 `dist/dev/mp-weixin`）
+3. 微信开发者工具导入 `dist/dev/mp-weixin`，填入 AppID
+4. `src/manifest.json` 中 `mp-weixin.appid` 填入同一 AppID
+5. 开通云开发，关联环境 `my-diary-d2goz6lgh3e20a17e`
+6. 部署云函数：`tcb fn deploy login -e my-diary-d2goz6lgh3e20a17e`（或右键开发者工具内项目上传）
