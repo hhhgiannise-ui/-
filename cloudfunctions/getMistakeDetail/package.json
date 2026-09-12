@@ -1,0 +1,9 @@
+{
+  "name": "getMistakeDetail",
+  "version": "1.0.0",
+  "description": "错题详情：主数据 + 最新一条 AI 分析",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

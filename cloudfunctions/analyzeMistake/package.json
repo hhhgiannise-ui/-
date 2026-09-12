@@ -1,0 +1,9 @@
+{
+  "name": "analyzeMistake",
+  "version": "1.0.0",
+  "description": "触发 AI 分析：状态机防重 + 调用 DeepSeek + 写入附属集合",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

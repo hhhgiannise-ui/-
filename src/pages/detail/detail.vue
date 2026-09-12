@@ -3,6 +3,14 @@
     <view v-if="mistake" class="card">
       <view class="subject">{{ mistake.subject }}</view>
       <view class="stem">{{ mistake.stem }}</view>
+      <view class="status-line">状态：{{ statusText(mistake.status) }}</view>
+      <button
+        v-if="mistake.status === 0 || mistake.status === 3"
+        class="btn-analyze"
+        :loading="analyzing"
+        @click="handleAnalyze"
+      >{{ mistake.status === 3 ? '重新分析' : '开始 AI 分析' }}</button>
+      <view v-else-if="mistake.status === 1" class="analyzing">AI 分析中，请稍候...</view>
     </view>
 
     <view v-if="analyses.length > 0" class="card">
@@ -20,22 +28,24 @@
       </view>
     </view>
 
-    <view v-else class="card empty-card">
-      <text>AI 分析将在下一阶段开放</text>
+    <view v-else-if="mistake && mistake.status === 2" class="card empty-card">
+      <text>暂无分析结果</text>
     </view>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { getMistakeDetail } from '@/api'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { getMistakeDetail, analyzeMistake } from '@/api'
 
 const mistake = ref(null)
 const analyses = ref([])
+const analyzing = ref(false)
 
-onLoad(async (options) => {
-  const { id } = options
+const statusText = (s) => ({ 0: '待分析', 1: '分析中', 2: '已分析', 3: '分析失败' }[s] || '未知')
+
+const loadDetail = async (id) => {
   try {
     const res = await getMistakeDetail(id)
     mistake.value = res.mistake
@@ -43,6 +53,27 @@ onLoad(async (options) => {
   } catch (err) {
     uni.showToast({ title: err.message || '加载失败', icon: 'none' })
   }
+}
+
+const handleAnalyze = async () => {
+  analyzing.value = true
+  uni.showLoading({ title: 'AI 分析中...', mask: true })
+  try {
+    await analyzeMistake(mistake.value._id)
+    uni.hideLoading()
+    uni.showToast({ title: '分析完成', icon: 'success' })
+    await loadDetail(mistake.value._id)
+  } catch (err) {
+    uni.hideLoading()
+    uni.showToast({ title: err.message || '分析失败', icon: 'none' })
+  } finally {
+    analyzing.value = false
+  }
+}
+
+onLoad((options) => loadDetail(options.id))
+onShow((options) => {
+  if (mistake.value) loadDetail(mistake.value._id)
 })
 </script>
 
@@ -62,6 +93,23 @@ onLoad(async (options) => {
   margin-top: 16rpx;
   font-size: 30rpx;
   line-height: 1.7;
+}
+.status-line {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+.btn-analyze {
+  margin-top: 20rpx;
+  background: #2b7de9;
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+}
+.analyzing {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #2b7de9;
 }
 .section-title {
   font-size: 32rpx;
