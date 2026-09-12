@@ -1,0 +1,9 @@
+{
+  "name": "createMistake",
+  "version": "1.0.0",
+  "description": "创建错题：入参校验后写入 mistakes 集合（openid 隔离）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
