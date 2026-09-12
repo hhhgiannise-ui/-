@@ -21,3 +21,4 @@ dist
 *.sw?
 
 miniprogram_npm/
+project.private.config.json

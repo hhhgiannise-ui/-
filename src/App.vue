@@ -1,5 +1,5 @@
 <script>
-const ENV_ID = 'my-diary-d2goz6lgh3e20a17e'
+const ENV_ID = 'cloud1-d0g4in4li4ecc7572'
 
 export default {
   onLaunch() {

@@ -54,5 +54,5 @@
 2. `npm run dev:mp-weixin`（编译并监听，产物在 `dist/dev/mp-weixin`）
 3. 微信开发者工具导入 `dist/dev/mp-weixin`，填入 AppID
 4. `src/manifest.json` 中 `mp-weixin.appid` 填入同一 AppID
-5. 开通云开发，关联环境 `my-diary-d2goz6lgh3e20a17e`
-6. 部署云函数：`tcb fn deploy login -e my-diary-d2goz6lgh3e20a17e`（或右键开发者工具内项目上传）
+5. 开通云开发，关联环境 `cloud1-d0g4in4li4ecc7572`
+6. 部署云函数：`tcb fn deploy login -e cloud1-d0g4in4li4ecc7572`（或右键开发者工具内项目上传）
