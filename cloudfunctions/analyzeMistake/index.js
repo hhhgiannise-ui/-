@@ -99,8 +99,10 @@ exports.main = async (event) => {
 
   try {
     const content = await callLLM(buildPrompt(mistake))
+    console.log('LLM 原始返回:', String(content).slice(0, 500))
     const parsed = JSON.parse(content)
-    const addRes = await analyses.add({
+    console.log('解析结果:', JSON.stringify(parsed).slice(0, 500))
+    const addData = {
       mistakeId,
       openid: OPENID,
       errorCause: String(parsed.errorCause || '').slice(0, 500),
@@ -109,7 +111,10 @@ exports.main = async (event) => {
       steps: Array.isArray(parsed.steps) ? parsed.steps.slice(0, 10) : [],
       model: LLM_MODEL,
       createTime: Date.now()
-    })
+    }
+    console.log('准备写入 add 的数据:', JSON.stringify(addData).slice(0, 800))
+    const addRes = await analyses.add(addData)
+    console.log('add 返回:', JSON.stringify(addRes))
     await mistakes.doc(mistakeId).update({ data: { status: 2, analysisId: addRes._id } })
     return { code: 0, message: 'ok', data: null }
   } catch (err) {
