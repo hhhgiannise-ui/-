@@ -1,0 +1,9 @@
+{
+  "name": "getMistakeList",
+  "version": "1.0.0",
+  "description": "错题列表：按 openid 分页查询，createTime 降序",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
