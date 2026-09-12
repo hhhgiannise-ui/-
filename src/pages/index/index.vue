@@ -57,7 +57,7 @@ const loadMistakes = async () => {
     const { list } = await getMistakeList({ page: 1, pageSize: 20 })
     mistakes.value = list
   } catch (err) {
-    console.warn('加载列表失败（云函数可能未部署）:', err.message)
+    // getMistakeList 属于录题阶段的云函数，未部署前静默，避免误导
   }
 }
 
