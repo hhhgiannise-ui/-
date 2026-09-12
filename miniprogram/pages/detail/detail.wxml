@@ -1,0 +1,25 @@
+<view class="page">
+  <view wx:if="{{mistake}}" class="card">
+    <view class="subject">{{mistake.subject}}</view>
+    <view class="stem">{{mistake.stem}}</view>
+  </view>
+
+  <view wx:if="{{analyses.length > 0}}" class="card">
+    <view class="section-title">AI 分析</view>
+    <view wx:for="{{analyses}}" wx:key="_id" class="analysis">
+      <view class="tag-row">
+        <text wx:for="{{item.knowledgeTags}}" wx:key="*this" class="tag">{{item}}</text>
+      </view>
+      <view class="row"><text class="row-label">错误原因：</text>{{item.errorCause}}</view>
+      <view class="row"><text class="row-label">难度：</text>{{item.difficulty}}</view>
+      <view wx:for="{{item.steps}}" wx:key="title" class="step">
+        <view class="step-title">{{index + 1}}. {{item.title}}</view>
+        <view class="step-content">{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="card empty-card">
+    <text>AI 分析将在下一阶段开放</text>
+  </view>
+</view>

@@ -1,22 +1,4 @@
-# 依赖与构建产物
 node_modules/
 miniprogram_npm/
-
-# 微信开发者工具个人配置（含 AppID 等，禁止提交）
-project.private.config.json
-*.local
-
-# 系统与编辑器
 .DS_Store
-.idea/
-.vscode/
-
-# 环境变量与密钥
-.env
-.env.*
-*.pem
-!*.example
-
-# 云函数本地调试产物
-cloudfunctions/**/node_modules/
-cloudfunctions/**/.tcb/
+*.log

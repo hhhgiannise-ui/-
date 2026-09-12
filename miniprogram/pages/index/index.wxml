@@ -1,0 +1,32 @@
+<view class="page">
+  <view class="hero">
+    <text class="hero-title">错题追问教练</text>
+    <text class="hero-sub">不告诉你答案的考研错题教练</text>
+  </view>
+
+  <view wx:if="{{!loggedIn}}" class="card login-card">
+    <text class="login-tip">第一步：微信登录（调用第一个云函数）</text>
+    <button class="btn-primary" bindtap="handleLogin">微信一键登录</button>
+  </view>
+
+  <view wx:else class="card login-card">
+    <text class="login-tip">已登录 ✓ openid: {{openid}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-head">
+      <text class="section-title">错题列表</text>
+      <text class="section-action" bindtap="goAdd">＋ 录题</text>
+    </view>
+
+    <view wx:if="{{mistakes.length === 0}}" class="empty">
+      <text>还没有错题，点右上角「＋ 录题」开始</text>
+    </view>
+
+    <view wx:for="{{mistakes}}" wx:key="_id" class="mistake-item" bindtap="goDetail" data-id="{{item._id}}">
+      <view class="mistake-subject">{{item.subject}}</view>
+      <view class="mistake-stem">{{item.stem}}</view>
+      <view class="mistake-status">状态：{{item.status === 0 ? '待分析' : item.status === 1 ? '分析中' : item.status === 2 ? '已分析' : '分析失败'}}</view>
+    </view>
+  </view>
+</view>

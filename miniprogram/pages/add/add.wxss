@@ -1,0 +1,42 @@
+.page {
+  padding-top: 20rpx;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  border: 1rpx solid #e0e0e0;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+}
+
+.form-textarea {
+  border: 1rpx solid #e0e0e0;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+  height: 260rpx;
+}
+
+.submit-btn {
+  margin-top: 20rpx;
+}
+
+.form-tip {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #999;
+  text-align: center;
+}
