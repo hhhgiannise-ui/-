@@ -115,7 +115,8 @@ exports.main = async (event) => {
       createTime: Date.now()
     }
     console.log('准备写入 add 的数据:', JSON.stringify(addData).slice(0, 800))
-    const addRes = await analyses.add(addData)
+    // wx-server-sdk 的 add() 要求字段包在 { data: ... } 里，否则会插入空文档
+    const addRes = await analyses.add({ data: addData })
     console.log('add 返回:', JSON.stringify(addRes))
     await mistakes.doc(mistakeId).update({ data: { status: 2, analysisId: addRes._id } })
     return { code: 0, message: 'ok', data: null }
