@@ -1,0 +1,9 @@
+{
+  "name": "askFollowup",
+  "version": "1.0.0",
+  "description": "追问教练：一问一答 + 历史上下文，写入 probe_turns",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

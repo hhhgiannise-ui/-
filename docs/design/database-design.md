@@ -20,20 +20,21 @@
 
 ## 2. 集合总览
 
-### V1 实建（4 个）
+### V1 实建（5 个）
 
 | 集合 | 归属 | 读写方 | 用途 |
 |------|------|--------|------|
 | `users` | 主数据 | 客户端读写 / 云函数 | 用户资料 |
 | `mistakes` | **主数据** | 客户端写 / 云函数读 | 错题（原题 + 校对文本），全项目核心 |
 | `mistake_analyses` | AI 附属 | 云函数写 / 客户端读 | AI 结构化分析结果 |
+| `probe_turns` | AI 附属 | 云函数写 / 客户端读 | 追问对话轮次（V1.1 简化版一问一答） |
 | `ai_call_logs` | 系统附属 | 云函数写 | AI 调用审计：模型、token、费用 |
 
 ### V2+ 规划（暂不建，设计先行）
 
 | 集合 | 阶段 | 用途 |
 |------|------|------|
-| `probe_sessions` / `probe_turns` | V2 | 追问引擎会话与轮次（S0–S5 状态机） |
+| `probe_sessions` | V2 | 追问引擎会话（S0–S5 状态机，替代 probe_turns 的简化模型） |
 | `variant_questions` | V3 | AI 变式题（含 verifyStatus 三重校验） |
 | `review_schedules` | V4 | 复习调度（间隔、EF、下次复习时间） |
 
@@ -86,7 +87,20 @@
 | `promptVer` | string | ✅ | Prompt 版本（审计关键） |
 | `createTime` | number | ✅ | 分析时间 |
 
-### 3.4 ai_call_logs（系统附属）
+### 3.4 probe_turns（AI 附属，V1.1 追问对话）
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `_id` | string | ✅ | 自动生成 |
+| `mistakeId` | string | ✅ | 关联 `mistakes._id` |
+| `openid` | string | ✅ | 冗余隔离键 |
+| `role` | enum | ✅ | `user` / `assistant`（对话角色） |
+| `content` | string | ✅ | 对话内容（≤ 2000 字） |
+| `createTime` | number | ✅ | 发言时间 |
+
+> 一问一答各一条记录，按 `createTime` 正序还原会话；轮次上限由云函数限制历史上下文（最近 12 条）。
+
+### 3.5 ai_call_logs（系统附属）
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -124,6 +138,7 @@
 | `mistakes` | `openid + subject`（复合） | 科目筛选 |
 | `mistakes` | `openid + status`（复合） | 状态筛选 |
 | `mistake_analyses` | `mistakeId` | 详情页按错题取分析 |
+| `probe_turns` | `mistakeId + createTime`（复合） | 详情页按错题取追问历史 |
 | `ai_call_logs` | `openid + createTime`（复合） | 用量/成本查询 |
 
 > 索引规则：最左前缀原则（与 MySQL 一致）；单文档唯一性用唯一索引（如 `users.openid`）。

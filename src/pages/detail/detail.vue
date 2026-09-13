@@ -31,17 +31,43 @@
     <view v-else-if="mistake && mistake.status === 2" class="card empty-card">
       <text>暂无分析结果</text>
     </view>
+
+    <view v-if="mistake && mistake.status === 2" class="card">
+      <view class="section-title">追问教练</view>
+      <view class="chat-list">
+        <view v-for="t in turns" :key="t._id" class="msg" :class="t.role === 'user' ? 'msg-user' : 'msg-ai'">
+          <text class="msg-text">{{ t.content }}</text>
+        </view>
+        <view v-if="sending" class="msg msg-ai">
+          <text class="msg-text">思考中...</text>
+        </view>
+      </view>
+      <view class="chat-input-row">
+        <input
+          v-model="question"
+          class="chat-input"
+          placeholder="向教练追问，如：我哪里想错了？"
+          confirm-type="send"
+          :disabled="sending"
+          @confirm="handleSend"
+        />
+        <button class="chat-send" :loading="sending" @click="handleSend">发送</button>
+      </view>
+    </view>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { getMistakeDetail, analyzeMistake } from '@/api'
+import { getMistakeDetail, analyzeMistake, askFollowup } from '@/api'
 
 const mistake = ref(null)
 const analyses = ref([])
 const analyzing = ref(false)
+const turns = ref([])
+const question = ref('')
+const sending = ref(false)
 
 const statusText = (s) => ({ 0: '待分析', 1: '分析中', 2: '已分析', 3: '分析失败' }[s] || '未知')
 
@@ -50,6 +76,7 @@ const loadDetail = async (id) => {
     const res = await getMistakeDetail(id)
     mistake.value = res.mistake
     analyses.value = res.analyses
+    turns.value = res.turns || []
   } catch (err) {
     uni.showToast({ title: err.message || '加载失败', icon: 'none' })
   }
@@ -68,6 +95,23 @@ const handleAnalyze = async () => {
     uni.showToast({ title: err.message || '分析失败', icon: 'none' })
   } finally {
     analyzing.value = false
+  }
+}
+
+const handleSend = async () => {
+  const q = question.value.trim()
+  if (!q || sending.value) return
+  sending.value = true
+  try {
+    const { answer } = await askFollowup(mistake.value._id, q)
+    const now = Date.now()
+    turns.value.push({ _id: 'u' + now, role: 'user', content: q })
+    turns.value.push({ _id: 'a' + now, role: 'assistant', content: answer })
+    question.value = ''
+  } catch (err) {
+    uni.showToast({ title: err.message || '追问失败', icon: 'none' })
+  } finally {
+    sending.value = false
   }
 }
 
@@ -156,6 +200,55 @@ onShow((options) => {
   text-align: center;
   color: #999;
   font-size: 26rpx;
+}
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 600rpx;
+  overflow-y: auto;
+}
+.msg {
+  max-width: 80%;
+  margin-bottom: 16rpx;
+  padding: 14rpx 20rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  word-break: break-all;
+}
+.msg-user {
+  align-self: flex-end;
+  background: #2b7de9;
+  color: #fff;
+  border-bottom-right-radius: 4rpx;
+}
+.msg-ai {
+  align-self: flex-start;
+  background: #f2f3f5;
+  color: #333;
+  border-bottom-left-radius: 4rpx;
+}
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+}
+.chat-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 20rpx;
+  background: #f5f6f7;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+}
+.chat-send {
+  margin-left: 16rpx;
+  padding: 0 32rpx;
+  background: #2b7de9;
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  line-height: 72rpx;
 }
 .card {
   background: #fff;

@@ -8,6 +8,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const mistakes = db.collection('mistakes')
 const analyses = db.collection('mistake_analyses')
+const turns = db.collection('probe_turns')
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
@@ -31,7 +32,13 @@ exports.main = async (event) => {
       .limit(1)
       .get()
 
-    return { code: 0, message: 'ok', data: { mistake, analyses: listRes.data } }
+    const turnsRes = await turns
+      .where({ mistakeId, openid: OPENID })
+      .orderBy('createTime', 'asc')
+      .limit(50)
+      .get()
+
+    return { code: 0, message: 'ok', data: { mistake, analyses: listRes.data, turns: turnsRes.data } }
   } catch (err) {
     console.error('getMistakeDetail 失败:', err)
     return { code: 500, message: '查询失败，请稍后重试', data: null }

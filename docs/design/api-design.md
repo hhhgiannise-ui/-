@@ -87,6 +87,18 @@
 | 出参 | `data: { mistake, analyses: [ ... ] }` |
 | 错误码 | 404 不存在 |
 
+### 3.6 askFollowup — 追问教练（V1.1 简化版）
+
+| 项 | 内容 |
+|----|------|
+| 入参 | `{ mistakeId, question }` |
+| 逻辑 | ① 校验错题归属 → ② 取该题最新分析 + 最近 6 轮对话历史作上下文 → ③ 调大模型（引导思考，明确要答案才给解析）→ ④ 用户问题与 AI 回答各写一条 `probe_turns` |
+| 出参 | `data: { answer }` |
+| 说明 | 追问要求错题已分析（前端控制，服务端不强制）；会话记录按 `mistakeId + openid` 隔离 |
+| 错误码 | 404 错题不存在 / 400 参数错误 / 500 模型或服务异常 |
+
+> 进阶版（S0–S5 状态机 + 流式输出）见 §5 V2 规划，本接口为简化一问一答实现。
+
 ---
 
 ## 4. 前端调用约定
@@ -115,7 +127,7 @@ export const getMistakeDetail = (id) => call('getMistakeDetail', { mistakeId: id
 | 阶段 | 接口 | 说明 |
 |------|------|------|
 | P1 | `updateMistake` / `deleteMistake` | 编辑、删除（敏感操作，走云函数） |
-| V2 | `startProbe` / `answerProbe` / `getProbeState` | 追问引擎（S0–S5 状态机） |
+| V2 | `startProbe` / `answerProbe` / `getProbeState` | 追问引擎进阶版：S0–S5 状态机 + SSE 流式输出（V1.1 已先落地简化版 `askFollowup`） |
 | V3 | `generateVariant` / `verifyVariant` | 变式题生成 + 三重校验 |
 | V4 | `getReviewPlan` / `submitReview` | 复习调度 |
 
