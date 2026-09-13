@@ -67,10 +67,8 @@ const callLLM = (prompt) =>
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
-  // testOpenid 仅为云端测试调试入口（临时），正式使用必须移除
-  const { mistakeId, testOpenid } = event || {}
-  const uid = OPENID || testOpenid
-  if (!uid) {
+  const { mistakeId } = event || {}
+  if (!OPENID) {
     return { code: 401, message: '未登录', data: null }
   }
   if (!mistakeId) {
@@ -87,7 +85,7 @@ exports.main = async (event) => {
   } catch (err) {
     return { code: 404, message: '错题不存在', data: null }
   }
-  if (!mistake || mistake.openid !== uid) {
+  if (!mistake || mistake.openid !== OPENID) {
     return { code: 404, message: '错题不存在', data: null }
   }
 
@@ -106,7 +104,7 @@ exports.main = async (event) => {
     console.log('解析结果:', JSON.stringify(parsed).slice(0, 500))
     const addData = {
       mistakeId,
-      openid: uid,
+      openid: OPENID,
       errorCause: String(parsed.errorCause || '').slice(0, 500),
       knowledgeTags: Array.isArray(parsed.knowledgeTags) ? parsed.knowledgeTags.slice(0, 10) : [],
       difficulty: parsed.difficulty || '中等',
